@@ -5,12 +5,14 @@ const router = express.Router()
 const protect = require('../middleware/authMiddleware')
 
 const {
-  addCustomer,
-  getCustomers,
-} = require('../controllers/customerController')
+  restructureLoan,
+} = require(
+  '../controllers/restructureController'
+)
 
-router.post('/', protect, addCustomer)
-
-router.get('/', protect, getCustomers)
+router.put(
+  '/:loanId',
+  protect, restructureLoan
+)
 
 module.exports = router

@@ -67,9 +67,9 @@ export default function Customers() {
 
         <div>
 
-          <h1 className="text-3xl font-bold text-slate-800">
+          {/* <h1 className="text-3xl font-bold text-slate-800">
             Customers
-          </h1>
+          </h1> */}
 
           <p className="text-slate-500 mt-1">
             Manage customer information

@@ -7,15 +7,19 @@ export default function DashboardLayout({
   return (
     <div className="flex bg-slate-100 min-h-screen">
 
+      {/* Sidebar */}
       <Sidebar />
 
-      <div className="flex-1 p-6">
+      {/* Main */}
+      <div className="flex-1 flex flex-col">
 
+        {/* Header */}
         <Navbar />
 
-        <div className="mt-6">
+        {/* Content */}
+        <main className="p-6">
           {children}
-        </div>
+        </main>
 
       </div>
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API_URL =
-  'http://localhost:5000/api/customers'
+  'http://localhost:5000/api/employees'
 
 // TOKEN
 const getToken = () => {
@@ -12,8 +12,8 @@ const getToken = () => {
   return user?.token
 }
 
-// GET CUSTOMERS
-export const getCustomers =
+// GET EMPLOYEES
+export const getEmployees =
   async () => {
     const response = await axios.get(
       API_URL,
@@ -27,12 +27,12 @@ export const getCustomers =
     return response.data
   }
 
-// ADD CUSTOMER
-export const addCustomer =
-  async (customerData) => {
+// ADD EMPLOYEE
+export const addEmployee =
+  async (data) => {
     const response = await axios.post(
       API_URL,
-      customerData,
+      data,
       {
         headers: {
           Authorization: `Bearer ${getToken()}`,

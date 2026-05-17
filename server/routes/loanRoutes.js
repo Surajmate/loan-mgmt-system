@@ -5,12 +5,12 @@ const router = express.Router()
 const protect = require('../middleware/authMiddleware')
 
 const {
-  addCustomer,
-  getCustomers,
-} = require('../controllers/customerController')
+  createLoan,
+  getLoans,
+} = require('../controllers/loanController')
 
-router.post('/', protect, addCustomer)
+router.post('/', protect, createLoan)
 
-router.get('/', protect, getCustomers)
+router.get('/', protect, getLoans)
 
 module.exports = router
