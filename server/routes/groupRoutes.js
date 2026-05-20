@@ -9,6 +9,11 @@ const {
   getGroups,
 } = require('../controllers/groupController')
 
+const authorizeRoles =
+  require(
+    '../middleware/roleMiddleware'
+  )
+
 router.post('/', protect, addGroup)
 
 router.get('/', protect, getGroups)

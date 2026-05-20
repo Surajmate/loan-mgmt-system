@@ -15,6 +15,22 @@ import Restructure from './pages/restructure/Restructure'
 import Documents from './pages/documents/Documents'
 import Employees from './pages/employees/Employees'
 import Assignments from './pages/assignments/Assignments'
+import Profile from './pages/profile/Profile'
+import LoanERPLandingPage from './pages/landing/LoanERPLandingPage'
+import RoleProtectedRoute from './components/RoleProtectedRoute'
+import CustomerDetails from './pages/customers/CustomerDetails'
+
+const ProtectedRoute = ({
+  children,
+}) => {
+  const user = JSON.parse(
+    localStorage.getItem('loanUser')
+  )
+
+  return user
+    ? children
+    : <Navigate to="/" />
+}
 
 function App() {
   const user = JSON.parse(
@@ -27,123 +43,139 @@ function App() {
       <Routes>
 
         <Route
-          path="/"
+          path="/login"
           element={
-            user ? (
-              <Navigate to="/dashboard" />
-            ) : (
-              <Login />
-            )
+            <Login />
           }
+        />
+
+        <Route
+          path="/"
+          element={<LoanERPLandingPage />}
         />
 
         <Route
           path="/dashboard"
           element={
-            user ? (
+            <ProtectedRoute>
               <Dashboard />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/customers"
           element={
-            user ? (
+            <ProtectedRoute>
               <Customers />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/customers/:id"
+          element={
+            <ProtectedRoute>
+              <CustomerDetails />
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/groups"
           element={
-            user ? (
+            <ProtectedRoute>
               <Groups />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/loans"
           element={
-            user ? (
+            <ProtectedRoute>
               <Loans />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/repayments"
           element={
-            user ? (
+            <ProtectedRoute>
               <Repayments />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/foreclosure"
           element={
-            user ? (
-              <Foreclosure />
-            ) : (
-              <Navigate to="/" />
-            )
+            <ProtectedRoute>
+              <RoleProtectedRoute
+                allowedRoles={[
+                  'ADMIN',
+                  'MANAGER',
+                ]}
+              >
+
+                <Foreclosure />
+
+              </RoleProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/restructure"
           element={
-            user ? (
+            <ProtectedRoute>
               <Restructure />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/documents"
           element={
-            user ? (
+            <ProtectedRoute>
               <Documents />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/employees"
           element={
-            user ? (
-              <Employees />
-            ) : (
-              <Navigate to="/" />
-            )
+            <ProtectedRoute>
+              <RoleProtectedRoute
+                allowedRoles={[
+                  'ADMIN',
+                ]}
+              >
+
+                <Employees />
+
+              </RoleProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/assignments"
           element={
-            user ? (
+            <ProtectedRoute>
               <Assignments />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
           }
         />
 

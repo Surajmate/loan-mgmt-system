@@ -11,6 +11,11 @@ const {
   '../controllers/foreclosureController'
 )
 
+const authorizeRoles =
+  require(
+    '../middleware/roleMiddleware'
+  )
+
 router.get(
   '/:loanId',
   protect,
@@ -20,7 +25,13 @@ router.get(
 router.put(
   '/:loanId/close',
   protect,
+  authorizeRoles(
+    'ADMIN',
+    'MANAGER'
+  ),
   closeForeclosure
 )
+
+
 
 module.exports = router

@@ -12,16 +12,18 @@ const getToken = () => {
   return user?.token
 }
 
+const config = {
+  headers: {
+    Authorization: `Bearer ${getToken()}`,
+  },
+}
+
 // GET CUSTOMERS
 export const getCustomers =
   async () => {
     const response = await axios.get(
       API_URL,
-      {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      }
+      config
     )
 
     return response.data
@@ -33,12 +35,20 @@ export const addCustomer =
     const response = await axios.post(
       API_URL,
       customerData,
-      {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      }
+      config
     )
+
+    return response.data
+  }
+
+export const getCustomerDetails =
+  async (id) => {
+
+    const response =
+      await axios.get(
+        `${API_URL}/${id}/details`,
+        config
+      )
 
     return response.data
   }

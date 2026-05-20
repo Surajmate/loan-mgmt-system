@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 body {
-  font-family: Inter, sans-serif;
-  background: #f5f7fb;
+  font-family: 'Inter', sans-serif;
+  /* background: #f5f7fb; */
   margin: 0;
+  background: #020617;
 }
 
 :root {
@@ -68,6 +69,10 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 h1,

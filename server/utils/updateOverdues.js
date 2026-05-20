@@ -37,7 +37,7 @@ const updateOverdues =
           loan.overdueDays =
             overdueDays
 
-          // ₹50/day penalty
+          // Rs.50/day penalty
           loan.penaltyAmount =
             overdueDays * 50
         } else {

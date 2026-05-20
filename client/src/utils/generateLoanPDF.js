@@ -30,7 +30,7 @@ export const generateLoanPDF = (
   )
 
   doc.text(
-    `Loan Amount: ₹${loan.loanAmount}`,
+    `Loan Amount: Rs.${loan.loanAmount}`,
     20,
     60
   )
@@ -42,13 +42,13 @@ export const generateLoanPDF = (
   )
 
   doc.text(
-    `Total Payable: ₹${loan.totalPayable}`,
+    `Total Payable: Rs.${loan.totalPayable}`,
     20,
     80
   )
 
   doc.text(
-    `Outstanding Amount: ₹${loan.outstandingAmount}`,
+    `Outstanding Amount: Rs.${loan.outstandingAmount}`,
     20,
     90
   )

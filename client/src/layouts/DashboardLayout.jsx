@@ -1,25 +1,28 @@
 import Sidebar from '../components/Sidebar'
+
 import Navbar from '../components/Navbar'
 
 export default function DashboardLayout({
   children,
 }) {
   return (
-    <div className="flex bg-slate-100 min-h-screen">
+    <div className="flex h-screen bg-slate-100">
 
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <Sidebar />
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col">
+      {/* RIGHT SECTION */}
+      <div className="flex-1 flex flex-col overflow-hidden">
 
-        {/* Header */}
+        {/* NAVBAR */}
         <Navbar />
 
-        {/* Content */}
-        <main className="p-6">
+        {/* PAGE CONTENT */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+
           {children}
-        </main>
+
+        </div>
 
       </div>
 

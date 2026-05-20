@@ -7,7 +7,25 @@ export const loginUser = async (userData) => {
   const response = await axios.post(
     `${API_URL}/login`,
     userData
-  )
+      )
 
-  return response.data
+    if (response.data) {
+
+      localStorage.setItem(
+        'loanUser',
+        JSON.stringify(
+          response.data
+        )
+      )
+    }
+
+    return response.data
+  }
+
+// LOGOUT
+export const logout = () => {
+
+  localStorage.removeItem(
+    'loanUser'
+  )
 }

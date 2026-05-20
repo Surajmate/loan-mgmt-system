@@ -1,35 +1,55 @@
-const Loan = require('../models/Loan')
+const Document = require(
+  '../models/Document'
+)
+
+const Loan = require(
+  '../models/Loan'
+)
 
 // UPLOAD DOCUMENT
 const uploadDocument =
   async (req, res) => {
     try {
-      const loan =
-        await Loan.findById(
-          req.params.loanId
-        )
+      const { loan } = req.params
 
-      if (!loan) {
-        return res.status(404).json({
-          message: 'Loan not found',
-        })
+      const {
+        documentType,
+      } = req.body
+
+      // FIND LOAN
+      const existingLoan =
+        await Loan.findById(loan)
+
+      if (!existingLoan) {
+        return res
+          .status(404)
+          .json({
+            message:
+              'Loan not found',
+          })
       }
 
-      loan.documents.push({
-        fileName:
-          req.file.originalname,
+      const document =
+        await Document.create({
+          loan,
 
-        filePath: req.file.path,
-      })
+          customer:
+            existingLoan.customer,
 
-      await loan.save()
+          fileName:
+            req.file.filename,
 
-      res.json({
-        message:
-          'Document uploaded successfully',
+          filePath:
+            req.file.path,
 
-        documents: loan.documents,
-      })
+          documentType:
+            documentType ||
+            'OTHER',
+        })
+
+      res.status(201).json(
+        document
+      )
     } catch (error) {
       res.status(500).json({
         message: error.message,
@@ -38,28 +58,70 @@ const uploadDocument =
   }
 
 // GET DOCUMENTS
-const getDocuments = async (req, res) => {
-  try {
-    const loan =
-      await Loan.findById(
-        req.params.loanId
-      )
+const getDocuments =
+  async (req, res) => {
+    try {
+      const documents =
+        await Document.find({
+          loan: req.params.loan,
+        })
+          .populate('customer')
+          .populate('loan')
+          .sort({
+            createdAt: -1,
+          })
 
-    if (!loan) {
-      return res.status(404).json({
-        message: 'Loan not found',
+      res.json(documents)
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
       })
     }
-
-    res.json(loan.documents)
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    })
   }
-}
+
+// VERIFY DOCUMENT
+const verifyDocument =
+  async (req, res) => {
+    try {
+      const {
+        status,
+        remarks,
+      } = req.body
+
+      const document =
+        await Document.findById(
+          req.params.id
+        )
+
+      if (!document) {
+        return res
+          .status(404)
+          .json({
+            message:
+              'Document not found',
+          })
+      }
+
+      document.status = status
+
+      document.remarks =
+        remarks
+
+      document.verifiedAt =
+        new Date()
+
+      await document.save()
+
+      res.json(document)
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      })
+    }
+  }
 
 module.exports = {
   uploadDocument,
   getDocuments,
+  verifyDocument,
 }

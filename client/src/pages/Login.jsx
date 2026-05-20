@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import {
   FaUser,
@@ -36,6 +36,15 @@ export default function Login() {
     })
   }
 
+  useEffect(() => {
+    const user = localStorage.getItem(
+      'loanUser'
+    )
+    if (user) {
+      navigate('/dashboard')
+    }
+  }, [navigate])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -50,17 +59,16 @@ export default function Login() {
         'loanUser',
         JSON.stringify(data)
       )
-
-      // Redirect
-      navigate('/dashboard')
-
-      console.log(data)
+      
+      setTimeout(() => {
+        window.location.href = '/dashboard'
+      }, 1500)
 
       // Redirect later
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          'Login failed'
+        'Login failed'
       )
     } finally {
       setLoading(false)
@@ -103,7 +111,7 @@ export default function Login() {
             <img
               src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
               alt="finance"
-              className="w-72 drop-shadow-2xl"
+              className="w-100 drop-shadow-2xl"
             />
           </div>
         </div>

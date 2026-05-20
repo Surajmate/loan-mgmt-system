@@ -6,11 +6,21 @@ import { getLoans } from '../../services/loanService'
 
 import { restructureLoan } from '../../services/restructureService'
 
+import {
+  successAlert,
+  errorAlert,
+  warningAlert,
+  closeAlert
+} from '../../utils/alerts'
+
 export default function Restructure() {
   const [loans, setLoans] = useState([])
 
   const [selectedLoan, setSelectedLoan] =
     useState(null)
+
+  const [restructureType, setRestructureType] =
+    useState('REDUCE_EMI')
 
   const [formData, setFormData] =
     useState({
@@ -63,10 +73,14 @@ export default function Restructure() {
     try {
       await restructureLoan(
         selectedLoan._id,
+        {
+          restructureType,
+        },
         formData
       )
 
-      alert(
+      successAlert(
+        'Success',
         'Loan restructured successfully'
       )
 
@@ -81,6 +95,11 @@ export default function Restructure() {
       })
     } catch (error) {
       console.log(error)
+      errorAlert('Error', 'Error restructuring loan: ' +
+        error.response?.data
+          ?.message ||
+        error.message
+      )
     }
   }
 
@@ -133,9 +152,29 @@ export default function Restructure() {
                     ?.fullName
                 }
                 {' - '}
-                ₹{loan.loanAmount}
+                Rs.{loan.loanAmount}
               </option>
             ))}
+
+          </select>
+
+          <select
+            value={restructureType}
+            onChange={(e) =>
+              setRestructureType(
+                e.target.value
+              )
+            }
+            className="w-full border border-slate-300 rounded-2xl px-4 py-4"
+          >
+
+            <option value="REDUCE_EMI">
+              Reduce EMI
+            </option>
+
+            <option value="REDUCE_TENURE">
+              Reduce Tenure
+            </option>
 
           </select>
 
@@ -162,7 +201,7 @@ export default function Restructure() {
 
               <p>
                 Outstanding:
-                ₹
+                Rs.
                 {
                   selectedLoan.outstandingAmount
                 }
@@ -170,7 +209,7 @@ export default function Restructure() {
 
               <p>
                 Current EMI:
-                ₹
+                Rs.
                 {
                   selectedLoan.emiAmount
                 }

@@ -10,9 +10,18 @@ const {
   '../controllers/restructureController'
 )
 
+const authorizeRoles =
+  require(
+    '../middleware/roleMiddleware'
+  )
+
 router.put(
   '/:loanId',
-  protect, restructureLoan
+  protect,
+  authorizeRoles(
+    'ADMIN',
+    'MANAGER'
+  ), restructureLoan
 )
 
 module.exports = router

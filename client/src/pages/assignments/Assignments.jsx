@@ -1,9 +1,23 @@
 import {
+    FaTasks,
+    FaCheckCircle,
+    FaUserTie,
+    FaClock,
+} from 'react-icons/fa'
+
+import {
     useEffect,
     useState,
 } from 'react'
 
 import DashboardLayout from '../../layouts/DashboardLayout'
+
+import {
+    successAlert,
+    errorAlert,
+    warningAlert,
+    closeAlert
+} from '../../utils/alerts'
 
 import {
     getAssignments,
@@ -38,6 +52,25 @@ export default function Assignments() {
             customer: '',
             loan: '',
         })
+
+    // STATS
+    const totalAssignments =
+        assignments.length
+
+    const activeAssignments =
+        assignments.filter(
+            (a) =>
+                a.status === 'ASSIGNED'
+        ).length
+
+    const completedAssignments =
+        assignments.filter(
+            (a) =>
+                a.status === 'COMPLETED'
+        ).length
+
+    const totalAgents =
+        employees.length
 
     // FETCH ALL
     const fetchData = async () => {
@@ -125,7 +158,7 @@ export default function Assignments() {
                 loan: '',
             })
         } catch (error) {
-            alert(
+            errorAlert('error',
                 error.response?.data?.message ||
                 'Assignment failed'
             )
@@ -135,17 +168,17 @@ export default function Assignments() {
     return (
         <DashboardLayout>
 
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            {/* PAGE HEADER */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
 
                 <div>
 
-                    <h1 className="text-3xl font-bold text-slate-800">
+                    {/* <h1 className="text-4xl font-bold text-slate-800">
                         Collection Assignments
-                    </h1>
+                    </h1> */}
 
                     <p className="text-slate-500 mt-2">
-                        Assign loans to collection agents
+                        Manage loan recovery operations and field assignments
                     </p>
 
                 </div>
@@ -154,21 +187,134 @@ export default function Assignments() {
                     onClick={() =>
                         setShowModal(true)
                     }
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-semibold"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg transition"
                 >
                     + Assign Collection
                 </button>
 
             </div>
 
+            {/* ANALYTICS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+
+                {/* TOTAL */}
+                <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 text-white shadow-lg">
+
+                    <div className="flex items-center justify-between">
+
+                        <div>
+
+                            <p className="text-blue-100">
+                                Assignments
+                            </p>
+
+                            <h2 className="text-4xl font-bold mt-3">
+                                {totalAssignments}
+                            </h2>
+
+                        </div>
+
+                        <div className="bg-white/20 p-4 rounded-2xl">
+
+                            <FaTasks className="text-3xl" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* ACTIVE */}
+                <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-6 text-white shadow-lg">
+
+                    <div className="flex items-center justify-between">
+
+                        <div>
+
+                            <p className="text-orange-100">
+                                Active
+                            </p>
+
+                            <h2 className="text-4xl font-bold mt-3">
+                                {activeAssignments}
+                            </h2>
+
+                        </div>
+
+                        <div className="bg-white/20 p-4 rounded-2xl">
+
+                            <FaClock className="text-3xl" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* COMPLETED */}
+                <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl p-6 text-white shadow-lg">
+
+                    <div className="flex items-center justify-between">
+
+                        <div>
+
+                            <p className="text-green-100">
+                                Completed
+                            </p>
+
+                            <h2 className="text-4xl font-bold mt-3">
+                                {completedAssignments}
+                            </h2>
+
+                        </div>
+
+                        <div className="bg-white/20 p-4 rounded-2xl">
+
+                            <FaCheckCircle className="text-3xl" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* AGENTS */}
+                <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl p-6 text-white shadow-lg">
+
+                    <div className="flex items-center justify-between">
+
+                        <div>
+
+                            <p className="text-purple-100">
+                                Agents
+                            </p>
+
+                            <h2 className="text-4xl font-bold mt-3">
+                                {totalAgents}
+                            </h2>
+
+                        </div>
+
+                        <div className="bg-white/20 p-4 rounded-2xl">
+
+                            <FaUserTie className="text-3xl" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             {/* Table */}
-            <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden">
 
                 <div className="overflow-x-auto">
 
                     <table className="w-full">
 
-                        <thead className="bg-slate-100">
+                        <thead className="bg-slate-100 text-slate-700">
 
                             <tr>
 
@@ -206,7 +352,7 @@ export default function Assignments() {
                                 (assignment) => (
                                     <tr
                                         key={assignment._id}
-                                        className="border-t border-slate-100"
+                                        className="border-t border-slate-100 hover:bg-slate-50 transition"
                                     >
 
                                         <td className="p-4 font-semibold">
@@ -226,7 +372,7 @@ export default function Assignments() {
                                         </td>
 
                                         <td className="p-4">
-                                            ₹
+                                            Rs.
                                             {
                                                 assignment.loan
                                                     ?.loanAmount
@@ -241,11 +387,15 @@ export default function Assignments() {
 
                                         <td className="p-4">
 
-                                            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                                            <span
+                                                className={`px-4 py-2 rounded-full text-sm font-semibold ${assignment.status ===
+                                                    'COMPLETED'
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-orange-100 text-orange-700'
+                                                    }`}
+                                            >
 
-                                                {
-                                                    assignment.status
-                                                }
+                                                {assignment.status}
 
                                             </span>
 
@@ -264,7 +414,7 @@ export default function Assignments() {
 
                                                             fetchData()
                                                         }}
-                                                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm"
+                                                        className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-md transition"
                                                     >
                                                         Complete
                                                     </button>
@@ -289,7 +439,7 @@ export default function Assignments() {
             {showModal && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
 
-                    <div className="bg-white rounded-3xl p-8 w-full max-w-2xl">
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl">
 
                         <div className="flex items-center justify-between mb-6">
 
@@ -320,7 +470,7 @@ export default function Assignments() {
                                 }
                                 onChange={handleChange}
                                 required
-                                className="border border-slate-300 rounded-xl px-4 py-3"
+                                className="border border-slate-300 rounded-2xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
 
                                 <option value="">
@@ -403,7 +553,7 @@ export default function Assignments() {
                                                 ?.fullName
                                         }
                                         {' - '}
-                                        ₹{loan.loanAmount}
+                                        Rs.{loan.loanAmount}
                                     </option>
                                 ))}
 

@@ -1,3 +1,11 @@
+import {
+  FaFileInvoiceDollar,
+  FaMoneyBillWave,
+  FaCheckCircle,
+  FaSearch,
+  FaChartLine,
+} from 'react-icons/fa'
+
 import { useEffect, useState } from 'react'
 
 import DashboardLayout from '../../layouts/DashboardLayout'
@@ -7,13 +15,26 @@ import {
   addRepayment,
 } from '../../services/repaymentService'
 
-import { getLoans } from '../../services/loanService'
+import {
+  getCustomers,
+} from '../../services/customerService'
+
+import {
+  getLoans,
+} from '../../services/loanService'
 
 export default function Repayments() {
   const [repayments, setRepayments] =
     useState([])
 
-  const [loans, setLoans] = useState([])
+  const [customers, setCustomers] =
+    useState([])
+
+  const [loans, setLoans] =
+    useState([])
+
+  const [search, setSearch] =
+    useState('')
 
   const [showModal, setShowModal] =
     useState(false)
@@ -31,40 +52,129 @@ export default function Repayments() {
       remarks: '',
     })
 
-  // FETCH REPAYMENTS
-  const fetchRepayments =
-    async () => {
-      try {
-        const data =
-          await getRepayments()
+  // ANALYTICS
+  const totalRepayments =
+    repayments.length
 
-        setRepayments(data)
-      } catch (error) {
-        console.log(error)
+  const totalCollections =
+    repayments.reduce(
+      (sum, repayment) =>
+        sum +
+        Number(
+          repayment.amountPaid || 0
+        ),
+      0
+    )
+
+  const averageRepayment =
+    totalRepayments > 0
+      ? (
+          totalCollections /
+          totalRepayments
+        ).toFixed(0)
+      : 0
+
+  // TODAY COLLECTIONS
+  const todayCollections =
+    repayments
+      .filter((repayment) => {
+        const today =
+          new Date()
+            .toISOString()
+            .split('T')[0]
+
+        const repaymentDate =
+          new Date(
+            repayment.createdAt
+          )
+            .toISOString()
+            .split('T')[0]
+
+        return (
+          today === repaymentDate
+        )
+      })
+      .reduce(
+        (sum, repayment) =>
+          sum +
+          Number(
+            repayment.amountPaid || 0
+          ),
+        0
+      )
+
+  // CUSTOMER LOOKUP
+  const getCustomer =
+    (customerData) => {
+      console.log('Customer Data:', customerData) // Debug log
+      if (
+        typeof customerData ===
+        'object'
+      ) {
+        return customerData
       }
+      return customers.find(
+        (customer) =>
+          customer._id ===
+          customerData
+      )
     }
 
-  // FETCH LOANS
-  const fetchLoans = async () => {
-    try {
-      const data = await getLoans()
+  // LOAN LOOKUP
+  const getLoan = (loanData) => {
+    if (
+      typeof loanData ===
+      'object'
+    ) {
+      return loanData
+    }
+    return loans.find(
+      (loan) =>
+        loan._id === loanData
+    )
+  }
 
-      setLoans(data)
+  // FILTER
+  const filteredRepayments =
+    repayments.filter(
+      (repayment) =>
+        getLoan(
+          repayment._id
+        )
+    )
+
+  // FETCH DATA
+  const fetchData = async () => {
+    try {
+      const [
+        repaymentData,
+        customerData,
+        loanData,
+      ] = await Promise.all([
+        getRepayments(),
+        getCustomers(),
+        getLoans(),
+      ])
+
+      setRepayments(repaymentData)
+
+      setCustomers(customerData)
+
+      setLoans(loanData)
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
-    fetchRepayments()
-    fetchLoans()
+    fetchData()
   }, [])
 
   // HANDLE CHANGE
   const handleChange = (e) => {
     const { name, value } = e.target
 
-    // Loan selected
+    // LOAN SELECTED
     if (name === 'loan') {
       const loan = loans.find(
         (l) => l._id === value
@@ -75,7 +185,8 @@ export default function Repayments() {
       setFormData({
         ...formData,
         loan: value,
-        customer: loan.customer._id,
+        customer:
+          loan?.customer?._id || '',
       })
 
       return
@@ -94,9 +205,7 @@ export default function Repayments() {
     try {
       await addRepayment(formData)
 
-      fetchRepayments()
-
-      fetchLoans()
+      fetchData()
 
       setShowModal(false)
 
@@ -118,32 +227,164 @@ export default function Repayments() {
   return (
     <DashboardLayout>
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      {/* PAGE HEADER */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
 
         <div>
 
-          {/* <h1 className="text-3xl font-bold text-slate-800">
-            Repayments
-          </h1> */}
-
-          <p className="text-slate-500 mt-1">
-            Track EMI collections
+          <p className="text-slate-500 mt-2">
+            Track collections and repayment performance
           </p>
 
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium shadow-lg transition"
+          onClick={() =>
+            setShowModal(true)
+          }
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg transition"
         >
-          + Collect EMI
+          + Add Repayment
         </button>
 
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      {/* ANALYTICS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+
+        {/* TOTAL COLLECTIONS */}
+        <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-emerald-100">
+                Total Collections
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                Rs.{totalCollections}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaMoneyBillWave className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* TODAY */}
+        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-blue-100">
+                Today's Collection
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                Rs.{todayCollections}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaChartLine className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* REPAYMENTS */}
+        <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-purple-100">
+                Repayments
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                {totalRepayments}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaFileInvoiceDollar className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* AVERAGE */}
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-orange-100">
+                Avg Repayment
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                Rs.{averageRepayment}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaCheckCircle className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* SEARCH */}
+      <div className="bg-white p-5 rounded-3xl shadow-sm mb-6">
+
+        <div className="relative">
+
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+
+          <input
+            type="text"
+            placeholder="Search repayments..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+            className="w-full border border-slate-300 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+        </div>
+
+      </div>
+
+      {/* TABLE */}
+      <div className="bg-white rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden">
 
         <div className="overflow-x-auto">
 
@@ -179,45 +420,98 @@ export default function Repayments() {
 
             <tbody>
 
-              {repayments.map(
+              {filteredRepayments.map(
                 (repayment) => (
                   <tr
                     key={repayment._id}
-                    className="border-t border-slate-100"
+                    className="border-t border-slate-100 hover:bg-slate-50 transition"
                   >
 
-                    <td className="p-4 font-semibold">
-                      {
-                        repayment.customer
-                          ?.fullName
-                      }
-                    </td>
-
+                    {/* CUSTOMER */}
                     <td className="p-4">
-                      ₹
-                      {
-                        repayment.loan
-                          ?.loanAmount
-                      }
+
+                      <div className="flex items-center gap-4">
+
+                        {/* Avatar */}
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+
+                          {(getCustomer(
+                            repayment.customer
+                          )?.fullName || 'N/A')
+                            ?.charAt(0)
+                            ?.toUpperCase()}
+
+                        </div>
+
+                        {/* INFO */}
+                        <div>
+
+                          <h3 className="font-semibold text-slate-800">
+
+                            {
+                              getCustomer(
+                                repayment.customer
+                              )?.fullName || 'N/A'
+                            }
+
+                          </h3>
+
+                          <p className="text-sm text-slate-500">
+
+                            EMI Collection
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
                     </td>
 
-                    <td className="p-4 text-green-600 font-semibold">
-                      ₹
-                      {
-                        repayment.amountPaid
-                      }
+                    {/* LOAN */}
+                    <td className="p-4">
+
+                      <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-semibold">
+
+                        Rs.
+                        {
+                          getLoan(
+                            repayment.loan
+                          )?.loanAmount || 0
+                        }
+
+                      </span>
+
                     </td>
 
+                    {/* AMOUNT */}
+                    <td className="p-4">
+
+                      <span className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-semibold">
+
+                        Rs.
+                        {
+                          repayment.amountPaid || 0
+                        }
+
+                      </span>
+
+                    </td>
+
+                    {/* METHOD */}
                     <td className="p-4">
                       {
                         repayment.paymentMethod
                       }
                     </td>
 
-                    <td className="p-4">
+                    {/* DATE */}
+                    <td className="p-4 text-slate-600">
+
                       {new Date(
                         repayment.createdAt
                       ).toLocaleDateString()}
+
                     </td>
 
                   </tr>
@@ -232,7 +526,7 @@ export default function Repayments() {
 
       </div>
 
-      {/* Modal */}
+      {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-auto">
 
@@ -260,13 +554,13 @@ export default function Repayments() {
               className="grid grid-cols-1 md:grid-cols-2 gap-5"
             >
 
-              {/* Loan */}
+              {/* LOAN */}
               <select
                 name="loan"
                 value={formData.loan}
                 onChange={handleChange}
                 required
-                className="border border-slate-300 rounded-xl px-4 py-3"
+                className="border border-slate-300 rounded-2xl px-4 py-4"
               >
 
                 <option value="">
@@ -283,13 +577,13 @@ export default function Repayments() {
                         ?.fullName
                     }
                     {' - '}
-                    ₹{loan.loanAmount}
+                    Rs.{loan.loanAmount}
                   </option>
                 ))}
 
               </select>
 
-              {/* Amount */}
+              {/* AMOUNT */}
               <input
                 type="number"
                 name="amountPaid"
@@ -297,10 +591,10 @@ export default function Repayments() {
                 value={formData.amountPaid}
                 onChange={handleChange}
                 required
-                className="border border-slate-300 rounded-xl px-4 py-3"
+                className="border border-slate-300 rounded-2xl px-4 py-4"
               />
 
-              {/* Penalty */}
+              {/* PENALTY */}
               <input
                 type="number"
                 name="penaltyAmount"
@@ -309,17 +603,17 @@ export default function Repayments() {
                   formData.penaltyAmount
                 }
                 onChange={handleChange}
-                className="border border-slate-300 rounded-xl px-4 py-3"
+                className="border border-slate-300 rounded-2xl px-4 py-4"
               />
 
-              {/* Payment Method */}
+              {/* METHOD */}
               <select
                 name="paymentMethod"
                 value={
                   formData.paymentMethod
                 }
                 onChange={handleChange}
-                className="border border-slate-300 rounded-xl px-4 py-3"
+                className="border border-slate-300 rounded-2xl px-4 py-4"
               >
 
                 <option value="CASH">
@@ -336,7 +630,7 @@ export default function Repayments() {
 
               </select>
 
-              {/* Outstanding */}
+              {/* LOAN DETAILS */}
               {selectedLoan && (
                 <div className="md:col-span-2 bg-slate-100 rounded-2xl p-5">
 
@@ -348,6 +642,7 @@ export default function Repayments() {
 
                     <p>
                       Customer:
+                      {' '}
                       {
                         selectedLoan.customer
                           ?.fullName
@@ -356,7 +651,8 @@ export default function Repayments() {
 
                     <p>
                       Loan Amount:
-                      ₹
+                      {' '}
+                      Rs.
                       {
                         selectedLoan.loanAmount
                       }
@@ -364,7 +660,8 @@ export default function Repayments() {
 
                     <p>
                       Outstanding:
-                      ₹
+                      {' '}
+                      Rs.
                       {
                         selectedLoan.outstandingAmount
                       }
@@ -375,19 +672,19 @@ export default function Repayments() {
                 </div>
               )}
 
-              {/* Remarks */}
+              {/* REMARKS */}
               <textarea
                 name="remarks"
                 placeholder="Remarks"
                 value={formData.remarks}
                 onChange={handleChange}
-                className="md:col-span-2 border border-slate-300 rounded-xl px-4 py-3"
+                className="md:col-span-2 border border-slate-300 rounded-2xl px-4 py-4"
               />
 
-              {/* Button */}
+              {/* BUTTON */}
               <button
                 type="submit"
-                className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold"
+                className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-semibold"
               >
                 Save Repayment
               </button>

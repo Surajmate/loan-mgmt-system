@@ -1,10 +1,21 @@
 import { useState } from 'react'
 
+import {
+  getCustomers,
+  addCustomer,
+} from '../services/customerService'
+import { useEffect } from 'react'
+import { getGroups } from '../services/groupService'
+
 export default function AddCustomerModal({
   isOpen,
   onClose,
   onSave,
 }) {
+
+  const [groups, setGroups] =
+    useState([])
+
   const [formData, setFormData] = useState({
     fullName: '',
     mobile: '',
@@ -31,6 +42,20 @@ export default function AddCustomerModal({
       groupName: '',
     })
   }
+
+  useEffect(() => {
+    const fetchGroups =
+      async () => {
+        try {
+          const data = await getGroups()
+          setGroups(data)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+    fetchGroups()
+  }, [])
 
   if (!isOpen) return null
 
@@ -90,14 +115,102 @@ export default function AddCustomerModal({
             className="w-full border border-slate-300 rounded-xl px-4 py-3"
           />
 
-          <input
+          {/* <input
             type="text"
             name="groupName"
             placeholder="Group Name"
             value={formData.groupName}
             onChange={handleChange}
             className="w-full border border-slate-300 rounded-xl px-4 py-3"
-          />
+          /> */}
+
+          <select
+            value={
+              formData.customerType
+            }
+
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+
+                customerType:
+                  e.target.value,
+              })
+            }
+
+            className="w-full mt-2 px-4 py-3 rounded-2xl border border-slate-200"
+          >
+
+            <option value="INDIVIDUAL">
+
+              Individual
+
+            </option>
+
+            <option value="GROUP">
+
+              Group Member
+
+            </option>
+
+          </select>
+
+          {
+            formData.customerType ===
+            'GROUP' && (
+
+              <select
+
+                value={
+                  formData.groupName
+                }
+
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+
+                    groupName:
+                      e.target.value,
+                  })
+                }
+
+                className="w-full mt-2 px-4 py-3 rounded-2xl border border-slate-200"
+              >
+
+                <option value="">
+
+                  Select Group
+
+                </option>
+
+                {
+                  groups.map(
+                    (group) => (
+
+                      <option
+                        key={
+                          group._id
+                        }
+
+                        value={
+                          group._id
+                        }
+                      >
+
+                        {
+                          group.groupCode
+                        } - {
+                          group.groupName
+                        }
+
+                      </option>
+                    )
+                  )
+                }
+
+              </select>
+            )
+          }
 
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-2">

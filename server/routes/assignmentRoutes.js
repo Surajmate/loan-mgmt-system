@@ -15,6 +15,11 @@ const protect = require(
   '../middleware/authMiddleware'
 )
 
+const authorizeRoles =
+  require(
+    '../middleware/roleMiddleware'
+  )
+
 router.post(
   '/',
   protect,

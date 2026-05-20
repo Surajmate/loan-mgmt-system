@@ -4,14 +4,20 @@ const repaymentSchema =
   new mongoose.Schema(
     {
       loan: {
-        type: mongoose.Schema.Types.ObjectId,
+        type:
+          mongoose.Schema.Types.ObjectId,
+
         ref: 'Loan',
+
         required: true,
       },
 
       customer: {
-        type: mongoose.Schema.Types.ObjectId,
+        type:
+          mongoose.Schema.Types.ObjectId,
+
         ref: 'Customer',
+
         required: true,
       },
 
@@ -27,6 +33,7 @@ const repaymentSchema =
 
       paymentMethod: {
         type: String,
+
         default: 'CASH',
       },
 

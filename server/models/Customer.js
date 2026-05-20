@@ -36,6 +36,25 @@ const customerSchema = new mongoose.Schema(
       type: String,
       default: 'ACTIVE',
     },
+
+    group: {
+      type:
+        mongoose.Schema.Types.ObjectId,
+
+      ref: 'Group',
+    },
+
+    customerType: {
+      type: String,
+
+      enum: [
+        'INDIVIDUAL',
+        'GROUP',
+      ],
+
+      default:
+        'INDIVIDUAL',
+    },
   },
   {
     timestamps: true,

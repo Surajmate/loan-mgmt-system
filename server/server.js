@@ -14,6 +14,11 @@ const documentRoutes = require('./routes/documentRoutes')
 const updateOverdues = require('./utils/updateOverdues')
 const employeeRoutes = require('./routes/employeeRoutes')
 const assignmentRoutes = require('./routes/assignmentRoutes')
+const profileRoutes = require('./routes/profileRoutes')
+const auditRoutes = require('./routes/auditRoutes')
+const dashboardRoutes = require('./routes/dashboardRoutes')
+const notificationRoutes = require('./routes/notificationRoutes')
+const path = require('path')
 
 dotenv.config()
 
@@ -30,26 +35,30 @@ app.use('/api/loans', loanRoutes)
 app.use('/api/repayments', repaymentRoutes)
 app.use('/api/foreclosure', foreclosureRoutes)
 app.use('/api/restructure', restructureRoutes)
-app.use('/uploads', express.static('uploads'))
+// app.use('/uploads', express.static('uploads'))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/api/documents', documentRoutes)
 app.use('/api/employees', employeeRoutes)
 app.use('/api/assignments', assignmentRoutes)
-
+app.use('/api/profile', profileRoutes)
+app.use('/api/audit', auditRoutes)
+app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/notifications', notificationRoutes)
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Connected'))
+  .then(() => console.log('Database Connected'))
   .catch((err) => console.log(err))
 
 // Test Route
 app.get('/', (req, res) => {
-  res.send('Loan Management API Running')
+  res.send('Loan ERP APIs Running')
 })
 
 // RUN EVERY 1 HOUR
-setInterval(() => {
-  updateOverdues()
-}, 600000)
+// setInterval(() => {
+//   updateOverdues()
+// }, 60000 * 60)
 
 const PORT = process.env.PORT || 5000
 

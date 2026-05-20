@@ -121,6 +121,86 @@ const loanSchema = new mongoose.Schema(
             default: false,
         },
 
+        emiStartDate: {
+            type: Date,
+        },
+
+        nextDueDate: {
+            type: Date,
+        },
+
+        lastPaymentDate: {
+            type: Date,
+        },
+
+        completedEmis: {
+            type: Number,
+            default: 0,
+        },
+
+        remainingEmis: {
+            type: Number,
+            default: 0,
+        },
+
+        penaltyAmount: {
+            type: Number,
+            default: 0,
+        },
+
+        nocGenerated: {
+            type: Boolean,
+            default: false,
+        },
+
+        nocGeneratedAt: {
+            type: Date,
+        },
+
+        repaymentSchedule: [
+            {
+                emiNumber: Number,
+
+                dueDate: Date,
+
+                emiAmount: Number,
+
+                principalAmount: Number,
+
+                interestAmount: Number,
+
+                outstandingAmount: Number,
+
+                status: {
+                    type: String,
+
+                    enum: [
+                        'PENDING',
+                        'PAID',
+                        'OVERDUE',
+                    ],
+
+                    default: 'PENDING',
+                },
+
+                paidAt: Date,
+            },
+        ],
+
+        partPaymentDone: {
+            type: Boolean,
+            default: false,
+        },
+
+        partPaymentAmount: {
+            type: Number,
+            default: 0,
+        },
+
+        lastPartPaymentDate: {
+            type: Date,
+        },
+
         documents: [
             {
                 fileName: String,
@@ -131,6 +211,33 @@ const loanSchema = new mongoose.Schema(
                 },
             },
         ],
+
+        approvalStatus: {
+            type: String,
+
+            enum: [
+                'PENDING',
+                'APPROVED',
+                'REJECTED',
+            ],
+
+            default: 'PENDING',
+        },
+
+        approvalRemarks: {
+            type: String,
+        },
+
+        approvedBy: {
+            type:
+                mongoose.Schema.Types.ObjectId,
+
+            ref: 'User',
+        },
+
+        approvedAt: {
+            type: Date,
+        },
     },
     {
         timestamps: true,

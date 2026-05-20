@@ -1,3 +1,10 @@
+import {
+  FaLayerGroup,
+  FaUsers,
+  FaMoneyBillWave,
+  FaSearch,
+} from 'react-icons/fa'
+
 import { useEffect, useState } from 'react'
 
 import DashboardLayout from '../../layouts/DashboardLayout'
@@ -11,6 +18,46 @@ export default function Groups() {
   const [groups, setGroups] = useState([])
 
   const [search, setSearch] = useState('')
+
+  // ANALYTICS
+  const totalGroups =
+    groups.length
+
+  const activeGroups =
+    groups.filter(
+      (group) =>
+        group.status ===
+        'ACTIVE'
+    ).length
+
+  const totalMembers =
+    groups.reduce(
+      (sum, group) =>
+        sum +
+        (group.members?.length || 0),
+      0
+    )
+
+  const totalExposure =
+    groups.reduce(
+      (sum, group) =>
+        sum +
+        Number(
+          group.totalLoanAmount ||
+          0
+        ),
+      0
+    )
+
+  // FILTER
+  const filteredGroups =
+    groups.filter((group) =>
+      group.groupName
+        ?.toLowerCase()
+        .includes(
+          search.toLowerCase()
+        )
+    )
 
   const [showModal, setShowModal] =
     useState(false)
@@ -65,58 +112,173 @@ export default function Groups() {
     }
   }
 
-  // FILTER
-  const filteredGroups = groups.filter(
-    (group) =>
-      group.groupName
-        .toLowerCase()
-        .includes(search.toLowerCase())
-  )
-
   return (
     <DashboardLayout>
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      {/* PAGE HEADER */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
 
         <div>
 
-          {/* <h1 className="text-3xl font-bold text-slate-800">
-            Groups
+          {/* <h1 className="text-4xl font-bold text-slate-800">
+            Group Lending
           </h1> */}
 
-          <p className="text-slate-500 mt-1">
-            Manage lending groups
+          <p className="text-slate-500 mt-2">
+            Manage borrower groups and shared lending responsibility
           </p>
 
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium shadow-lg transition"
+          onClick={() =>
+            setShowModal(true)
+          }
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg transition"
         >
-          + Add Group
+          + Create Group
         </button>
 
       </div>
 
-      {/* Search */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm mb-6">
+      {/* ANALYTICS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
-        <input
-          type="text"
-          placeholder="Search groups..."
-          value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        {/* TOTAL GROUPS */}
+        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-blue-100">
+                Total Groups
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                {totalGroups}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaLayerGroup className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ACTIVE */}
+        <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-emerald-100">
+                Active Groups
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                {activeGroups}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaUsers className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* MEMBERS */}
+        <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-purple-100">
+                Total Members
+              </p>
+
+              <h2 className="text-4xl font-bold mt-3">
+                {totalMembers}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaUsers className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* EXPOSURE */}
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-6 text-white shadow-lg">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-orange-100">
+                Loan Exposure
+              </p>
+
+              <h2 className="text-3xl font-bold mt-3">
+                Rs.{totalExposure}
+              </h2>
+
+            </div>
+
+            <div className="bg-white/20 p-4 rounded-2xl">
+
+              <FaMoneyBillWave className="text-3xl" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      {/* SEARCH */}
+      <div className="bg-white p-5 rounded-3xl shadow-sm mb-6">
+
+        <div className="relative">
+
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+
+          <input
+            type="text"
+            placeholder="Search groups..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+            className="w-full border border-slate-300 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+        </div>
 
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden">
 
         <div className="overflow-x-auto">
 
@@ -158,8 +320,38 @@ export default function Groups() {
                   className="border-t border-slate-100 hover:bg-slate-50 transition"
                 >
 
-                  <td className="p-4 font-semibold text-slate-800">
-                    {group.groupName}
+                  <td className="p-4">
+
+                    <div className="flex items-center gap-4">
+
+                      {/* Avatar */}
+                      <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+
+                        {group.groupName
+                          ?.charAt(0)
+                          ?.toUpperCase()}
+
+                      </div>
+
+                      {/* INFO */}
+                      <div>
+
+                        <h3 className="font-semibold text-slate-800">
+
+                          {group.groupName}
+
+                        </h3>
+
+                        <p className="text-sm text-slate-500">
+
+                          Shared Liability Group
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
                   </td>
 
                   <td className="p-4">
@@ -171,13 +363,27 @@ export default function Groups() {
                   </td>
 
                   <td className="p-4">
-                    {group.members.length}
+                    <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold">
+
+                      {group.members?.length || 0}
+                      {' '}
+                      Members
+
+                    </span>
                   </td>
 
                   <td className="p-4">
 
-                    <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
+                    <span
+                      className={`px-4 py-2 rounded-full text-sm font-semibold ${group.status ===
+                        'ACTIVE'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                        }`}
+                    >
+
                       {group.status}
+
                     </span>
 
                   </td>

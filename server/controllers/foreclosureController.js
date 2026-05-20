@@ -105,6 +105,20 @@ const closeForeclosure =
 
         foreclosureAmount,
       })
+
+      await createAuditLog({
+        req,
+
+        action:
+          'Loan Foreclosed',
+
+        entityType: 'Loan',
+
+        entityId: loan._id,
+
+        details:
+          'Loan foreclosed successfully',
+      })
     } catch (error) {
       res.status(500).json({
         message: error.message,

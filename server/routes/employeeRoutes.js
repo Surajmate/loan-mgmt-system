@@ -1,9 +1,12 @@
-const express = require('express')
+const express = require(
+  'express'
+)
 
-const router = express.Router()
+const router =
+  express.Router()
 
 const {
-  addEmployee,
+  createEmployee,
   getEmployees,
 } = require(
   '../controllers/employeeController'
@@ -13,12 +16,22 @@ const protect = require(
   '../middleware/authMiddleware'
 )
 
+const authorizeRoles =
+  require(
+    '../middleware/roleMiddleware'
+  )
+
+// CREATE EMPLOYEE
 router.post(
   '/',
   protect,
-  addEmployee
+  authorizeRoles(
+    'ADMIN'
+  ),
+  createEmployee
 )
 
+// GET EMPLOYEES
 router.get(
   '/',
   protect,
