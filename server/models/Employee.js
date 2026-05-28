@@ -20,6 +20,13 @@ const employeeSchema =
       mobile: {
         type: String,
       },
+      
+      branch: {
+        type:
+          mongoose.Schema.Types.ObjectId,
+
+        ref: 'Branch',
+      },
 
       role: {
         type: String,

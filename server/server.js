@@ -19,6 +19,10 @@ const auditRoutes = require('./routes/auditRoutes')
 const dashboardRoutes = require('./routes/dashboardRoutes')
 const notificationRoutes = require('./routes/notificationRoutes')
 const path = require('path')
+const branchRoutes =
+  require(
+    './routes/branchRoutes'
+  )
 
 dotenv.config()
 
@@ -44,6 +48,10 @@ app.use('/api/profile', profileRoutes)
 app.use('/api/audit', auditRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/notifications', notificationRoutes)
+app.use(
+  '/api/branches',
+  branchRoutes
+)
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)

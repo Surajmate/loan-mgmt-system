@@ -228,6 +228,13 @@ const loanSchema = new mongoose.Schema(
             type: String,
         },
 
+        branch: {
+            type:
+                mongoose.Schema.Types.ObjectId,
+
+            ref: 'Branch',
+        },
+
         approvedBy: {
             type:
                 mongoose.Schema.Types.ObjectId,
