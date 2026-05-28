@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API_URL =
-  'http://localhost:5000'
+  'https://loan-mgmt-system.onrender.com'
 
 // TOKEN
 const getToken = () => {

@@ -512,7 +512,7 @@ export default function Documents() {
 
                       {/* VIEW */}
                       <a
-                        href={`http://localhost:5000/${doc.filePath}`}
+                        href={`https://loan-mgmt-system.onrender.com/${doc.filePath}`}
                         target="_blank"
                         rel="noreferrer"
                         className="bg-blue-100 hover:bg-blue-200 text-blue-700 p-3 rounded-xl transition"
@@ -524,7 +524,7 @@ export default function Documents() {
 
                       {/* DOWNLOAD */}
                       <a
-                        href={`http://localhost:5000/${doc.filePath}`}
+                        href={`https://loan-mgmt-system.onrender.com/${doc.filePath}`}
                         download
                         className="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 p-3 rounded-xl transition"
                       >

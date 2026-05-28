@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/api/auth'
+const API_URL = 'https://loan-mgmt-system.onrender.com/api/auth'
 
 // LOGIN
 export const loginUser = async (userData) => {

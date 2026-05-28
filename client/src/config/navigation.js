@@ -9,6 +9,7 @@ import {
   FaFolderOpen,
   FaUsersCog,
   FaTasks,
+  FaBuilding
 } from 'react-icons/fa'
 
 const navigation = [
@@ -22,6 +23,20 @@ const navigation = [
       'MANAGER',
       'AUDITOR',
     ],
+  },
+
+  {
+    name: 'Branches',
+
+    path: '/branches',
+
+    icon: FaBuilding,
+
+    roles: [
+      'ADMIN',
+      'MANAGER',
+      'AUDITOR',
+    ]
   },
 
   {

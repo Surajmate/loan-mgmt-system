@@ -1,0 +1,20 @@
+{
+  "name": "loan-mgmt-system",
+
+  "version": "1.0.0",
+
+  "private": true,
+
+  "scripts": {
+
+    "client": "cd client && npm run dev",
+
+    "server": "cd server && npm run dev",
+
+    "dev": "concurrently -n SERVER,CLIENT -c green,blue \"npm run server\" \"npm run client\""
+  },
+
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

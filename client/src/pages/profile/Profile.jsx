@@ -207,7 +207,7 @@ const Profile = () => {
                                     profile?.profilePicture ? (
 
                                         <img
-                                            src={`http://localhost:5000/${profile.profilePicture}`}
+                                            src={`https://loan-mgmt-system.onrender.com/${profile.profilePicture}`}
                                             alt="profile"
                                             className="w-32 h-32 rounded-[28px] object-cover border-4 border-white/20 shadow-xl"
                                         />

@@ -19,6 +19,8 @@ import Profile from './pages/profile/Profile'
 import LoanERPLandingPage from './pages/landing/LoanERPLandingPage'
 import RoleProtectedRoute from './components/RoleProtectedRoute'
 import CustomerDetails from './pages/customers/CustomerDetails'
+import BranchDetails from './pages/branches/BranchDetails'
+import Branches from './pages/branches/Branches'
 
 const ProtectedRoute = ({
   children,
@@ -59,6 +61,28 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/branches"
+          element={
+            <ProtectedRoute
+              permission="branches"
+            >
+              <Branches />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/branches/:id"
+          element={
+            <ProtectedRoute
+              permission="branches"
+            >
+              <BranchDetails />
             </ProtectedRoute>
           }
         />

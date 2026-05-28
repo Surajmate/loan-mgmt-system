@@ -5,6 +5,12 @@ import {
   FaSearch,
 } from 'react-icons/fa'
 
+import Loader
+  from '../../components/Loader'
+
+import TableSkeleton
+  from '../../components/TableSkeleton'
+
 import { useEffect, useState } from 'react'
 
 import DashboardLayout from '../../layouts/DashboardLayout'
@@ -15,6 +21,7 @@ import { useNavigate } from 'react-router-dom'
 import { addCustomer, getCustomers } from '../../services/customerService'
 
 export default function Customers() {
+
   const navigate = useNavigate()
 
   const [customers, setCustomers] = useState([])
@@ -252,111 +259,103 @@ export default function Customers() {
 
             <tbody>
 
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan="4"
-                    className="p-6 text-center"
-                  >
-                    Loading...
-                  </td>
-                </tr>
-              ) : filteredCustomers.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="4"
-                    className="p-6 text-center"
-                  >
-                    <div className="py-10 text-center">
-
-                      <h3 className="text-xl font-semibold text-slate-700">
-                        No Customers Found
-                      </h3>
-
-                      <p className="text-slate-500 mt-2">
-                        Try adjusting your search or add a new customer.
-                      </p>
-
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                filteredCustomers.map(
-                  (customer) => (
-                    <tr
-                      key={customer._id}
-                      className="border-t border-slate-100 hover:bg-slate-50 transition-all text-left"
+              {loading ? <TableSkeleton />
+                : filteredCustomers.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="p-6 text-center"
                     >
+                      <div className="py-10 text-center">
 
-                      <td className="p-4">
+                        <h3 className="text-xl font-semibold text-slate-700">
+                          No Customers Found
+                        </h3>
 
-                        <div className="flex gap-4">
+                        <p className="text-slate-500 mt-2">
+                          Try adjusting your search or add a new customer.
+                        </p>
 
-                          {/* Avatar */}
-                          <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredCustomers.map(
+                    (customer) => (
+                      <tr
+                        key={customer._id}
+                        className="border-t border-slate-100 hover:bg-slate-50 transition-all text-left"
+                      >
 
-                            {customer.fullName
-                              ?.charAt(0)
-                              ?.toUpperCase()}
+                        <td className="p-4">
+
+                          <div className="flex gap-4">
+
+                            {/* Avatar */}
+                            <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+
+                              {customer.fullName
+                                ?.charAt(0)
+                                ?.toUpperCase()}
+
+                            </div>
+
+                            {/* Info */}
+                            <div>
+
+                              <h3 className="font-semibold text-slate-800 mb-2">
+                                {customer.fullName}
+                              </h3>
+
+                              <p className="text-sm text-slate-500">
+                                {
+                                  customer.occupation
+                                }
+                                <span className="p-2 rounded-full text-sm font-semibold bg-green-100 text-green-700 cursor-pointer ml-4"
+                                  onClick={() =>
+                                    navigate(
+                                      `/customers/${customer._id}`
+                                    )
+                                  }>
+                                  View Details
+                                </span>
+
+                              </p>
+
+                            </div>
 
                           </div>
 
-                          {/* Info */}
-                          <div>
+                        </td>
 
-                            <h3 className="font-semibold text-slate-800 mb-2">
-                              {customer.fullName}
-                            </h3>
+                        <td className="p-4">
+                          {customer.mobile}
+                        </td>
 
-                            <p className="text-sm text-slate-500">
-                              {
-                                customer.occupation
-                              }
-                              <span className="p-2 rounded-full text-sm font-semibold bg-green-100 text-green-700 cursor-pointer ml-4"
-                                onClick={() =>
-                                  navigate(
-                                    `/customers/${customer._id}`
-                                  )
-                                }>
-                                View Details
-                              </span>
+                        <td className="p-4">
+                          {customer.groupName}
+                        </td>
 
-                            </p>
+                        <td className="p-4">
 
-                          </div>
+                          <span
+                            className={`px-4 py-2 rounded-full text-sm font-semibold ${customer.status ===
+                              'ACTIVE'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-red-100 text-red-700'
+                              }`}
+                          >
 
-                        </div>
+                            {customer.status}
 
-                      </td>
+                          </span>
 
-                      <td className="p-4">
-                        {customer.mobile}
-                      </td>
+                        </td>
 
-                      <td className="p-4">
-                        {customer.groupName}
-                      </td>
-
-                      <td className="p-4">
-
-                        <span
-                          className={`px-4 py-2 rounded-full text-sm font-semibold ${customer.status ===
-                            'ACTIVE'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-700'
-                            }`}
-                        >
-
-                          {customer.status}
-
-                        </span>
-
-                      </td>
-
-                    </tr>
+                      </tr>
+                    )
                   )
-                )
-              )}
+                )}
 
             </tbody>
 

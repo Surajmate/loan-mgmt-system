@@ -373,7 +373,7 @@ const Navbar = () => {
                 profile?.profilePicture ? (
 
                   <img
-                    src={`http://localhost:5000/${profile.profilePicture}`}
+                    src={`https://loan-mgmt-system.onrender.com/${profile.profilePicture}`}
                     alt="profile"
                     className="w-12 h-12 rounded-2xl object-cover"
                   />
@@ -430,7 +430,7 @@ const Navbar = () => {
                       profile?.profilePicture ? (
 
                         <img
-                          src={`http://localhost:5000/${profile.profilePicture}`}
+                          src={`https://loan-mgmt-system.onrender.com/${profile.profilePicture}`}
                           alt="profile"
                           className="w-16 h-16 rounded-2xl object-cover border-2 border-white/20"
                         />

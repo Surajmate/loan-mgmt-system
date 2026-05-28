@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API_URL =
-  'http://localhost:5000/api/dashboard'
+  'https://loan-mgmt-system.onrender.com/api/dashboard'
 
 const user =
   JSON.parse(
